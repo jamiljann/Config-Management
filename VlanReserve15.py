@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
 import os
-#from tkinter.filedialog import askopenfilename, asksaveasfilename
+
 from network_class12 import Network
 
 class my_menus():   
@@ -28,7 +28,6 @@ class my_menus():
         self.file_frame = Frame(self.root)
         self.search_frame = Frame(self.root)
         self.report_frame = Frame(self.root)
-        #self.report_radio_frame = LabelFrame(self.report_frame, text='  Select Type of Report ')
 
         self.Search_Des_var =   StringVar()
         self.Search_ID_var =    StringVar() 
@@ -85,13 +84,6 @@ class my_menus():
     def exit_app(self):
         if messagebox.askokcancel("Quit", "Really quit?"):
             self.root.destroy()
-        #messagebox.showinfo('information', 'Hi! You got a prompt.')
-        #messagebox.showerror('error', 'Something went wrong!')
-        #messagebox.showwarning('warning', 'accept T&C')
-        #messagebox.askquestion('Ask Question', 'Do you want to continue?')
-        #messagebox.askokcancel('Ok Cancel', 'Are You sure?')
-        #messagebox.askyesno('Yes|No', 'Do you want to proceed?')
-        #messagebox.askretrycancel('retry', 'Failed! want to try again?')
         
     def show_about(self):
         about_message = "Network Automation, Version 4.3"
@@ -105,7 +97,7 @@ class my_menus():
         self.tree = None
         self.Hide_All_Frames() 
         self.file_frame.grid(column=0, row=0, padx=8, pady=4)    
-        configs_path = "configs/"#"D:/Python/Programs/New13/configs"
+        configs_path = "configs/"
         
         try:
             os.listdir(configs_path)
@@ -223,20 +215,12 @@ class my_menus():
         self.List_entry_search.grid(column=0, row=1, sticky= W , padx=10, pady=10)
         self.create_list_box(2, 0)
         
-        #report_radio_frame = LabelFrame(self.report_frame, text='  Select Type of Report ')
-        #report_radio_frame.grid(column=0, row=2, padx=8, pady=4)
-        #g1 = Radiobutton(report_radio_frame, text= "General Report",                variable= self.radio, value=1)
-        #g2 = Radiobutton(report_radio_frame, text= "Ports with Misconfiguration",   variable= self.radio, value=2)
-        #g3 = Radiobutton(report_radio_frame, text= "Qos Report",                    variable= self.radio, value=3)
         report_button = Button(self.report_frame, text='Generate Report', command = self.Report_on_change, 
                                bg="orange", default='active')
-            
-        #g1.grid(column=3, row=2, sticky=W, padx=20)
-        #g2.grid(column=3, row=3, sticky=W, padx=20)
-        #g3.grid(column=3, row=4, sticky=W, padx=20)
+        
         report_button.grid(column=0, row=3, sticky= W, pady=5)
        
-        status_label = Label(self.report_frame, textvariable= self.Statusmsg , fg="green", font="Times 10")#relief=SUNKEN, anchor=W,
+        status_label = Label(self.report_frame, textvariable= self.Statusmsg , fg="green", font="Times 10")
         status_label.grid(row=5, column=0, sticky=W , padx=5) 
         
         self.report_frame.grid_columnconfigure(0, weight=1)
@@ -244,14 +228,12 @@ class my_menus():
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
     def create_list_box(self, box_row, box_colomn):  
         # Add scroll bar
-        
         self.lbox = Listbox(self.report_frame , listvariable = self.cnames, activestyle='none',
-                                cursor='hand2', fg='#1C3D7D', width= 20, height= 10, 
-                                )#side= LEFT, fill= BOTH, yscrollcommand= scroll_bar.set
+                                cursor='hand2', fg='#1C3D7D', width= 20, height= 10)
         self.lbox.bind("<<ListboxSelect>>", self.ShowRouter)
-        self.lbox.grid(row= box_row, column= box_colomn, sticky= W, padx=5)#, sticky= (N,S,E,W)  columnspan=2,
+        self.lbox.grid(row= box_row, column= box_colomn, sticky= W, padx=5)
         scroll_bar = Scrollbar(self.report_frame)
-        scroll_bar.grid(row= box_row,column= box_colomn+1, sticky= W)#, side= RIGHT, fill= BOTH, sticky= E+S+N
+        scroll_bar.grid(row= box_row,column= box_colomn+1, sticky= W)
         
         self.lbox.config(yscrollcommand= scroll_bar.set)
         scroll_bar.config(command= self.lbox.yview)
@@ -434,7 +416,6 @@ class my_menus():
     
     def print_contents(self, event):
         messagebox.showinfo('Full Interface Configuration',"Must show all Interface configs")
-        #event.widget["activeforeground"] = "red"
     
     def tree_item_selected(self, event):
         result = ""
@@ -467,12 +448,6 @@ class my_menus():
             for widget in self.file_frame.winfo_children():
                 widget.destroy()
             self.file_frame.grid_forget() 
-            '''
-        # destroy all widgets from report_radio_frame
-        if self.report_radio_frame is not None:
-            for widget in self.report_radio_frame.winfo_children():
-                widget.destroy()
-            self.report_radio_frame.grid_forget()  '''  
         
     
     def CreateGatewayMenu(self):
