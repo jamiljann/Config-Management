@@ -252,9 +252,6 @@ class Interface():
             return
     #++++++++++++++++++++++++++++++++++++
     def CR_Valid_interface(self):
-        result = False
-        a = False
-        e = False
       
         if ((self.Description == "") or (self.ID == "0") or (self.config.find("shutdown") != -1)):
             self.Problem = True
@@ -291,11 +288,7 @@ class Interface():
         
     #++++++++++++++++++++++++++++++++++++
     def CSW_Valid_interface(self):
-        result = False
-        a = False
-        b = False
-        c = False
-        d = False
+
         if ((self.Description == "no-des") or (self.ID == "0") or (self.config.find("shutdown") != -1)):
             self.Problem = True
         if ((self.FCP == False) and (self.Profile == "")) :
