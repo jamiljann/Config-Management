@@ -3,15 +3,15 @@ from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
 import os
+from tkinter.filedialog import askopenfilename, asksaveasfilename
 
-from network_class12 import Network
+from network_class17 import Network
 
 class my_menus():   
     def __init__(self):   
         self.root = Tk()
         self.PROGRAM_NAME = " Network Automation in TCI-Khorasan "
         self.root.title(self.PROGRAM_NAME)
-        self.root.iconbitmap('abq.ico')
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
         dimention = str(screen_width) + 'x' + str(screen_height)
@@ -49,12 +49,12 @@ class my_menus():
         self.create_report_menu()
         self.create_about_menu()
         self.tree = None
-    
+            
     def create_file_menu(self):
         self.file_menu = Menu(self.menu_bar, tearoff=0)
         self.menu_bar.add_cascade(label="Settings",                     menu= self.file_menu)
-        self.file_menu.add_command(label="Read Router's Config Files locally",           command= self.ReadConfigsMenu)
-        self.file_menu.add_command(label="Open Router's Config Files from the Sharing",  command= self.OpenConfigsMenu)
+        self.file_menu.add_command(label="Read Router's Config Files locally.", command= self.ReadConfigsMenu)
+        self.file_menu.add_command(label="Open Router's Config Files from the shared folder",  command= self.OpenConfigsMenu)
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit",             command= self.exit_app )
     
@@ -89,8 +89,8 @@ class my_menus():
         about_message = "Network Automation, Version 4.3"
         about_detail = (
             'by Seyedjamil Sabbaghifaragard \n'
-            'For assistance please contact the author. \n' 
-            'https://www.linkedin.com/in/seyed-jamil-sabbaghi-faragard/')
+            'For assistance please contact the author: \n' 
+            'jsabaghi@gmail.com, https://www.linkedin.com/in/seyed-jamil-sabbaghi-faragard/')
         messagebox.showinfo(title='About', message= about_message, detail= about_detail)
         
     def ReadConfigsMenu(self):
@@ -105,7 +105,7 @@ class my_menus():
             messagebox.showerror(title='Error', message='Problem Reading Config Files.', detail=str(e) )
             self.Statusmsg.set("Path not OK.\n" + configs_path)
         else:
-            self.network = Network(configs_path)
+            self.network = Network()
             self.ListofRouters =  self.network.Router_List()
             self.cnames.set( self.network.Router_List())
             self.Total_Routers = str(self.network.NO_Router())
@@ -120,16 +120,14 @@ class my_menus():
         self.file_frame.grid(column=0, row=0, padx=8, pady=4) 
         
         """Open Directory of the Config files."""
-        #configs_path = askopenfilename(filetypes=[("Config Files", "*.cfg"), ("All Files", "*.*")])
-        #configs_path = filedialog.askdirectory()   
-        configs_path = "//10.85.96.201/Shared/configs"
+        configs_path = filedialog.askdirectory()   
         try:
             os.listdir(configs_path)
         except Exception as e:
             messagebox.showerror(title='Error', message='Problem Reading Config Files.', detail=str(e) )
             self.Statusmsg.set("Path not OK.\n" + configs_path)
         else:
-            self.network = Network(configs_path)
+            self.network = Network()
             self.ListofRouters =  self.network.Router_List()
             self.cnames.set( self.network.Router_List())
             self.Total_Routers = str(self.network.NO_Router())
@@ -146,7 +144,7 @@ class my_menus():
         self.Des_entry = Entry(self.search_frame, textvariable= self.Search_Des_var)
         search_button_Des = Button(self.search_frame, text="Search",   command= self.Description_on_change, bg="orange")
     
-        Des_label.grid(row=0, column=0,  padx=5) #sticky=(tk.W + tk.E),
+        Des_label.grid(row=0, column=0,  padx=5) 
         self.Des_entry.grid(row=1, column=0,  padx=5) 
         self.Des_entry.focus_set()
         search_button_Des.grid(row=2, column=0,  padx=5,  pady=5 )
@@ -200,7 +198,7 @@ class my_menus():
         self.Port_entry.focus_set()
         search_button_Port.grid(row=2, column=0, padx=5,  pady=5)
         
-        status_label = Label(self.search_frame, textvariable= self.Statusmsg , fg="green", font="Times 10 ")#relief=SUNKEN, anchor=W,
+        status_label = Label(self.search_frame, textvariable= self.Statusmsg , fg="green", font="Times 10 ")
         status_label.grid(row=3, column=0, sticky=(W + E), padx=5) 
     
     def CreateReportMenu(self):
@@ -240,16 +238,11 @@ class my_menus():
         self.lbox.selection_set(0)
         
     def Listbox_update(self, data):
-        #self.lbox.delete(0, END)
-        #for item in data:
-            #self.lbox.insert(END, item)
         self.cnames.set(list(data))
-        #print(list(data))
             
     def Checkentry_vs_Listbox(self, event):
         #grab what was typed
         typed = self.List_entry_search.get()
-        #print(typed)
         if typed == '':
             data = self.cnames
         else:
@@ -322,7 +315,7 @@ class my_menus():
         DSLAM_IP = self.DSLAM_entry.get()
         
         status_label = Label(self.search_frame, textvariable= self.Statusmsg , font="Times 10  bold", 
-                             fg="green")#relief=SUNKEN, anchor=W, bg="white",
+                             fg="green")
         status_label.grid(row=9, column=0, sticky=(W + E), padx=5)
   
         if DSLAM_IP != "" :
@@ -332,7 +325,6 @@ class my_menus():
                 self.Tree_router_name = self.Search_result[0][0]
                 self.Tree_int_name = self.Search_result[0][1]
                 self.Tree_int_encap = self.Search_result[0][3]
-                #print(self.Tree_router_name, self.Tree_int_name, self.Tree_int_encap )
                 self.create_tree(self.Search_result, self.search_frame, 3,0,2)
                 #self.Search_result = None
                 Exist_label = Label(self.search_frame, text="Exist Ports:", font="Times 12 bold")
@@ -357,7 +349,7 @@ class my_menus():
         result = []
         idx = self.lbox.get(ACTIVE) 
         #self.lbox.see(idx)
-        self.Statusmsg.set( "Creating Report file ...")#  + str(selected_router) ) 
+        self.Statusmsg.set( "Creating Report file ...")
         result= self.network.Show_router_interfaces (idx)
         self.Statusmsg.set( "Report file is Done.")
         if result:
@@ -466,11 +458,8 @@ class my_menus():
         
     def Reserve_on_change(self):
         result = []
-        #if self.Search_result:
         if self.Tree_router_name != "": 
             result = self.network.List_Gateway_Subports(self.Tree_router_name, self.Tree_int_name )
-            #result = self.network.List_Gateway_Subports(self.Search_result)
-            #print(result)
             if result:
                     self.create_tree(result, self.search_frame, 6,0,15)
             else:
