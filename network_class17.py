@@ -3,8 +3,6 @@ from os import path
 import sys
 import xlwt
 import xlrd 
-import re
-from os import path
 
 from router_class17 import Router
 from interface_class17 import Interface
@@ -171,7 +169,7 @@ class Network():
         return (self.NO_IDs)
     #++++++++++++++++++++++++++++++++++++
     def NO_inerface (self):
-    ''' Return Number of Intetrfaces in the Network'''
+        ''' Return Number of Intetrfaces in the Network'''
         return (self.NO_Interfaces)
     #++++++++++++++++++++++++++++++++++++
     def NO_FCP (self):
@@ -355,7 +353,7 @@ class Network():
                     result.append(ints.Show_Interface(router.Name))
 
             if result == [] :         
-            return False
-        else:
-            return result
+                return False
+            else:
+                return result
             
