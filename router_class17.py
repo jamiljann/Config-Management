@@ -7,10 +7,9 @@ from interface_class17 import Interface
 class Router():    
     def __init__(self, file_name):        
         self.Name = file_name.split('.cfg')[0]
-        #print('Router Name:', self.Name)
         self.file_name = str(path.realpath('configs'))+ '/' + file_name
         self.Type = ""
-        self.IP = "No_IP"
+        self.IP = ""
         self.all_interfaces = [] 
         self.NO_Ints = 0
         self.No_IDs = 0
@@ -50,7 +49,8 @@ class Router():
                         count += 1
                     elif line.find("!") != -1 :
                         if interface == 1:
-                            self.all_interfaces.append(Interface(config_lines) )
+                            self.all_interfaces.append(Interface(config_lines))
+                            #print(config_lines)
                             config_lines =""
                             interface = 0
                     elif interface == 1 and count < 25:
@@ -118,11 +118,12 @@ class Router():
         return(self.IP)
     #++++++++++++++++++++++++++++++++++++           
     def Set_IP(self):
-        if ((self.Name.find("nPE")!= -1) or (self.Name.find("uPE")!= -1) or (self.Name.find("NAR")!= -1) or (self.Name.find("SER")!= -1)):
+        if ((self.Name.find("nPE")!= -1) or (self.Name.find("uPE")!= -1) or 
+            (self.Name.find("NAR")!= -1) or (self.Name.find("SER")!= -1)):
             for ints in self.all_interfaces:
                 if ints.Name.find("interface Loopback100") != -1 :
                     self.IP = ints._Return_IP()
-        #elif (self.Name.find("nPE")!= -1):    
+    
     #++++++++++++++++++++++++++++++++++++           
     def Find_Description(self, my_Des):
         result = []
@@ -217,9 +218,9 @@ class Router():
 
         first_port_name = int_name.split(".")[0]
         port_pe = int(int_ecap[1].strip()) 
-        #first_port_name = Interface Name to dot
+        '''first_port_name = Interface Name to dot'''
         result = self.Find_Port(first_port_name)
-        #Find all interfaces start with first_port_name 
+        '''Find all interfaces start with first_port_name'''
         for item in result:
             find = False
             for encap_item in item[3]:
@@ -229,7 +230,7 @@ class Router():
                         continue
                     if find:
                         output.append (item)
-        return(output, port_pe)# return a list of show_port, Return PE
+        return(output, port_pe)   '''return a list of show_port, Return PE'''
        
     #+++++++++++++++++++++++++++++++++++"              
     def Write_To_File(self, file_name, write_text):
@@ -246,11 +247,10 @@ class Router():
 
         file_name = str(path.realpath('SumConfigs'))+ '/'+ self.Name + '.txt'
         self.Write_To_File(file_name, write_text)
-        #print('Writing:', file_name)
             
     #++++++++++++++++++++++++++++++++++++
     def Export_interfaces_excel(self):  
-        #create Excel file to show all Interfaces of Router...
+        '''create Excel file to show all Interfaces of Router...'''
         i =1
         my_workbook = xlwt.Workbook()
         sheet = my_workbook.add_sheet(self.Name)
@@ -299,7 +299,6 @@ class Router():
         sheet.write(0, 5, 'Qos Exist')
         sheet.write(0, 6, 'Qos-DCRM')
         sheet.write(0, 7, 'Type')
-        #sheet.write(0, 8, 'Valid')
         sheet.write(0, 8, 'FCP')
         sheet.write(0, 9, 'Problem')
         
@@ -313,50 +312,10 @@ class Router():
                 sheet.write(i, 5, ints.Profile)
                 sheet.write(i, 6, ints.DCRM_Profile)
                 sheet.write(i, 7, ints.Type)
-                #sheet.write(i, 8, ints.Valid)
                 sheet.write(i, 8, ints.FCP)
                 sheet.write(i, 9, ints.Problem)
                 i +=1 
         file_name = "Valid-Ports-of-" + self.name + ".xls"
         my_workbook.save(file_name)
-        #print("create Excel file to show Valid Interfaces of Router...")
-    #++++++++++++++++++++++++++++++++++++
-    def ssh_connection(self):
-        ip = "172.16.7.242"
-        username = "khr-sabaghi"
-        password = "A@4321"
-        cmd_s = ["sys", "display interface brief"]
-        #Creating SSH CONNECTION
-        try:
-            session = paramiko.SSHClient()
-            session.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-          
-            session.connect(self.ip.rstrip("\n"), username = username, password = password)
-            connection = session.invoke_shell()	
-            
-            connection.send("\n")
-            connection.send("terminal length 0\n")
-            time.sleep(1)
-            connection.send("4\n")
-            time.sleep(9)
-            for each_line in cmd_s:
-                connection.send(each_line + '\n' )
-                time.sleep(19)  
-            #Checking command output for IOS syntax errors
-            router_output = connection.recv(65535)
-            if re.search(b"% Invalid input", router_output):
-                print("* There was at least one IOS syntax error on device {} :(".format(ip))
-            else:
-                print("\nDONE for device  } :)\n".format(ip))             
-            #Test for reading command output
-            #print(str(router_output) + "\n")
-            connection.send('\n'  )
-            time.sleep(19)      
-            connection.send('\n'  )
-            time.sleep(19)
-            #Closing the connection
-            session.close()  
-        except paramiko.AuthenticationException:
-            pass
-            #print("* Invalid username or password :( \n* Please check the username/password file or the device configuration.")
-            #print("* Closing program... Bye!")  
+        '''create Excel file to show Valid Interfaces of Router...")'''
+  

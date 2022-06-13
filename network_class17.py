@@ -10,7 +10,7 @@ from router_class17 import Router
 from interface_class17 import Interface
 
 class Network():    
-    def __init__(self ):
+    def __init__(self):
         config_files_path = str(path.realpath('configs/'))
         self.file_list = []
         self.all_routers = []
@@ -31,7 +31,6 @@ class Network():
  
     #++++++++++++++++++++++++++++++++++++
     def File_Status(self):     
-        #os.access('my_file', os.R_OK) # Check for read access
         if  self.ConfigfilesStatus == "Path OK":
             return True
         else:
@@ -48,7 +47,7 @@ class Network():
     def Export_router(self, router_name):
         for router in self.all_routers:
             if router.Name == router_name:
-                #print("Exporting Router interfaces to Excel File...")
+                print("Exporting Router interfaces to Excel File...")
                 router.Export_interfaces_excel() 
                 
     #++++++++++++++++++++++++++++++++++++
@@ -66,7 +65,9 @@ class Network():
         result = []
         for router in self.all_routers:
             if router.Name == router_name :
+                #print(router.Name, router_name)
                 router_interfaces = router.Show_Interfaces()
+                #print(router_interfaces)
                 if router_interfaces:
                     for each_interface in router_interfaces:
                         if int_name is not None:

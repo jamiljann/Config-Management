@@ -1,4 +1,3 @@
-import paramiko
 import time   
 
 FCP_List = ["NEDAGOSTAR", "RIGHTEL", "ARYARESANE", "ARIARESANE", "ARYARESANEH",
@@ -80,7 +79,6 @@ class Interface():
         IP = self._Find_Int_Param(start, end) 
         if IP.split(".")[0].isnumeric():
             self.IP = IP
-  
     #++++++++++++++++++++++++++++++++++++
     def Set_ID(self):
         my_desc = self.Description
@@ -95,7 +93,6 @@ class Interface():
     #++++++++++++++++++++++++++++++++++++
     def Set_VPN(self):  
         for key, value in VPN_types.items():
-            #print(key, '->', value)
             end = "\n"
             if self.config.find(key)!= -1:
                 self.VPN.append(value + ' ')
@@ -107,7 +104,6 @@ class Interface():
     #++++++++++++++++++++++++++++++++++++
     def Set_Encapsulation(self):  
         for key, value in Encapsulation_types.items():
-            #print(key, '->', value)
             end = "\n"
             if self.config.find(key)!= -1:
                 self.Encap.append(value)
@@ -172,13 +168,11 @@ class Interface():
     def Find_IP_INET(self):
         '''Find Interface's IP in INET and not start with 10'''
         if self.IP != '':
-            contain_INET = self.Show_Config().find('INET')
-            IP_split = self.IP.split(".")
-            first_ten= IP_split[0]
-            
-            if first_ten != '10':   
-                if contain_INET != -1:
+            if  self.Show_Config().find('INET') != -1:
+                first_ten = self.IP.split(".")[0]
+                if first_ten != '10':   
                     return self.IP
+            return False
         else:
             return False
                  
@@ -209,7 +203,7 @@ class Interface():
         #srr-queue bandwidth shape 250 250 250 250
     #++++++++++++++++++++++++++++++++++++
     def FCP_exception(self):
-        each_names = self.config.split(" ")
+        each_names = self.Description.split(" ")
         for j in each_names:
             for i in FCP_List:
                 if i == j:
@@ -222,7 +216,7 @@ class Interface():
 
         if ((self.Description == "") or (self.ID == "0") or (self.config.find("shutdown") != -1)):
             self.Problem = True
-        if (self.FCP == False):
+        if self.FCP :
             if (self.Profile == "") or (self.DCRM_Profile == "") or (self.DCRM_Profile != self.Profile):
                 self.Problem = True
             
@@ -262,58 +256,35 @@ class Interface():
         a = False
         e = False
       
-        if ((self.Description == "no-des") or (self.ID == "0") or (self.config.find("shutdown") != -1)):
+        if ((self.Description == "") or (self.ID == "0") or (self.config.find("shutdown") != -1)):
             self.Problem = True
-        if ((self.FCP == False) and (self.Profile == "")) :
+        if ((self.FCP) and (self.Profile == "")) :
             self.Problem = True
-        if ((self.FCP == False) and (self.DCRM_Profile == "")):
+        if ((self.FCP) and (self.DCRM_Profile == "")):
             self.Problem = True
-        if ((self.FCP == False) and (self.DCRM_Profile != self.Profile)):
+        if ((self.FCP ) and (self.DCRM_Profile != self.Profile)):
             self.Problem = True
             
-        Valid = self.config.find("ip router isis")
-        if Valid != -1:
+        if self.config.find("ip router isis") != -1:
             self.Type = "ISIS_UpLink"
-            self.Valid = False
-            #self.Find_IP()
             return
-        Valid = self.config.find("ip binding vpn-instance IPOSS")
-        if Valid != -1:
+        if self.config.find("ip binding vpn-instance IPOSS") != -1:
             self.Type = "IPOSS_Uplink"
-            self.Valid = False
-            #self.Find_IP()
             return
-        
-        Valid = self.config.find("shutdown")
-        if Valid != -1:
+        if self.config.find("shutdown") != -1:
             self.Type = "Shut Down"
-            self.Valid = False
             return
-        Valid = self.config.find("Loopback")
-        if Valid != -1:
+        if self.config.find("Loopback") != -1:
             self.Type = "LoopBack"
-            self.Valid = False  
             return
-        Valid = self.config.find("Vlan")   
-        if Valid != -1:
+        if self.config.find("Vlan") != -1:
             self.Type = "Vlan"
-            self.Valid = False
             return 
-        Valid = self.config.find("Vlanif")   
-        if Valid != -1:
+        if self.config.find("Vlanif")   != -1:
             self.Type = "VlanIF"
-            self.Valid = False
             return
              
-        a = self.config.find("ip address ") 
-        if a != -1 :
-            a = True
-        e = self.config.find("xconnect")
-        if e != -1 :
-            e = True
-        
-        result = a or e
-        if result == True:
+        if self.config.find("ip address ") or self.config.find("xconnect"):
             self.Valid = True
         else:
             self.Valid = False
@@ -334,53 +305,25 @@ class Interface():
         if ((self.FCP == False) and (self.DCRM_Profile != self.Profile)):
             self.Problem = True
              
-        Valid = self.config.find("ip router isis")
-        if Valid != -1:
+        if self.config.find("ip router isis") != -1:
             self.Type = "ISIS_UpLink"
-            self.Valid = False
             return
-        Valid = self.config.find("shutdown")
-        if  Valid!= -1:
+        if  self.config.find("shutdown") != -1:
             self.Type = "Shut Down"
-            self.Valid = False
             return
-        Valid = self.config.find("NULL")   
-        if  Valid!= -1:
+        if  self.config.find("NULL") != -1:
             self.Type = "Null"
-            self.Valid = False
             return
-        Valid = self.config.find("vty")
-        if  Valid!= -1:
+        if  self.config.find("vty") != -1:
             self.Type = "vty"
-            self.Valid = False
             return
-        Valid = self.config.find("LoopBack") 
-        Valid2= self.config.find("Loopback") 
-        if  Valid!= -1 or Valid2 != -1:
-            self.Type = "LoopBack"
-            self.Valid = False  
-            
-        Valid = self.config.find("interface Vlan")
-        if  Valid!= -1:
-            self.Type = "VlanIF"
-            self.Valid = False
-           
+  
+        if  self.config.find("LoopBack") != -1 or self.config.find("Loopback") != -1:
+            self.Type = "LoopBack"      
+        if  self.config.find("interface Vlan") != -1:
+            self.Type = "VlanIF"           
         
-        a = self.config.find("switchport access vlan") 
-        if a != -1 :
-            a = True
-        b = self.config.find("switchport trunk allowed vlan")
-        if b != -1 :
-            b = True
-        c = self.config.find("ip address ") 
-        if c != -1 :
-            c = True
-        d = self.config.find("xconnect")
-        if d != -1 :
-            d = True
-        
-        result = a or b or c or d  
-        if result == True:
+        if self.config.find("switchport access vlan") or self.config.find("switchport trunk allowed vlan") or self.config.find("ip address ")  or self.config.find("xconnect"):  
             self.Valid = True
         else:
             self.Valid = False
