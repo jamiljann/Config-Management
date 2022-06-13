@@ -1,6 +1,6 @@
 import xlwt
 import xlrd 
-import re
+
 from os import path
 from interface_class17 import Interface
 
@@ -16,7 +16,7 @@ class Router():
         
         self.Set_Type()
         self.Create_Interfaces()
-        self.Encap_Profile_Valid()
+        self.SetIP_Profile_Valid()
         
     #++++++++++++++++++++++++++++++++++++
     def Set_Type(self): 
@@ -50,7 +50,6 @@ class Router():
                     elif line.find("!") != -1 :
                         if interface == 1:
                             self.all_interfaces.append(Interface(config_lines))
-                            #print(config_lines)
                             config_lines =""
                             interface = 0
                     elif interface == 1 and count < 25:
@@ -79,9 +78,9 @@ class Router():
                 print('Unknown Router= ', self.file_name )
         
     #++++++++++++++++++++++++++++++++++++
-    def Encap_Profile_Valid(self):
+    def SetIP_Profile_Valid(self):
         ''' Set Router's IP , 
-            Port Encapsulation, Port Profile, Port Type, Port Valid, Port Problem'''
+            Port's Encapsulation, Profile, Type, Valid, Problem'''
         for ints in self.all_interfaces:
             self.NO_Ints += 1
             if ints.ID != "0":
@@ -96,7 +95,7 @@ class Router():
                 ints.CR_Valid_interface()
                 
             elif self.Type.find("Cisco_SW")!= -1:
-                ints.Find_CSW_profile()
+                ints.Find_CR_profile()
                 ints.CSW_Valid_interface()
             else:
                 self.Type == "Other"
@@ -117,14 +116,6 @@ class Router():
     def _Router_IP(self): 
         return(self.IP)
     #++++++++++++++++++++++++++++++++++++           
-    def Set_IP(self):
-        if ((self.Name.find("nPE")!= -1) or (self.Name.find("uPE")!= -1) or 
-            (self.Name.find("NAR")!= -1) or (self.Name.find("SER")!= -1)):
-            for ints in self.all_interfaces:
-                if ints.Name.find("interface Loopback100") != -1 :
-                    self.IP = ints._Return_IP()
-    
-    #++++++++++++++++++++++++++++++++++++           
     def Find_Description(self, my_Des):
         result = []
 
@@ -132,10 +123,11 @@ class Router():
             interface_result = ints.Find_Description(my_Des, self.Name)
             if interface_result :
                 result.append (interface_result)          
-        if result != "":
-            return result
-        else:
+        if result == [] :         
             return False
+        else:
+            return result
+
     #++++++++++++++++++++++++++++++++++++   
     def Find_ID(self, my_ID):
         result = []
@@ -144,10 +136,11 @@ class Router():
                 id_result = ints.Find_ID(my_ID, self.Name)
                 if id_result :
                     result.append (id_result)          
-        if result != "":
-            return result
-        else:
+        if result == [] :         
             return False
+        else:
+            return result
+        
      #++++++++++++++++++++++++++++++++++++   
     def Find_IP(self, my_IP):
         result = []
@@ -156,10 +149,11 @@ class Router():
             IP_result = ints.Find_IP(my_IP, self.Name)
             if IP_result :
                 result.append (IP_result)          
-        if result != "":
-            return result
-        else:
+        if result == [] :         
             return False
+        else:
+            return result
+        
     #++++++++++++++++++++++++++++++++++++   
     def Find_Port(self, int_name):
         result = []
@@ -168,10 +162,10 @@ class Router():
             Name_result = ints.Find_Port(int_name, self.Name)
             if Name_result :
                 result.append (Name_result)          
-        if result != "":
-            return result
+        if result == [] :         
+            return False
         else:
-            return False  
+            return result 
         
     #++++++++++++++++++++++++++++++++++++   
     def Show_Interfaces(self, interface_Name = None):
@@ -184,10 +178,10 @@ class Router():
             Name_result = ints.Show_Interface(self.Name) 
             if Name_result :
                 result.append (Name_result)
-        if result != "":
-            return result
+        if result == [] :         
+            return False
         else:
-            return False  
+            return result 
         
     #++++++++++++++++++++++++++++++++++++  
     def Find_Free_Ports(self):
@@ -196,20 +190,21 @@ class Router():
             IP_result = ints.Find_Free_Ports(self.Name) 
             if IP_result :
                 result.append(IP_result)
-        if result != "":
-            return result
+        if result == [] :         
+            return False
         else:
-            return False    
+            return result
+        
     #++++++++++++++++++++++++++++++++++++   
     def Find_IP_INET(self):
         result = []
         for ints in self.all_interfaces:
             if ints.Find_IP_INET() :
                 result.append(ints.Show_Interface(self.Name))
-        if result != "":
-            return result
+        if result == [] :         
+            return False
         else:
-            return False     
+            return result   
     #+++++++++++++++++++++++++++++++++++"
     def Same_PE_Ints(self, int_name, int_ecap):
         result = []
@@ -230,7 +225,8 @@ class Router():
                         continue
                     if find:
                         output.append (item)
-        return(output, port_pe)   '''return a list of show_port, Return PE'''
+        '''return a list of show_port, Return PE'''
+        return(output, port_pe)   
        
     #+++++++++++++++++++++++++++++++++++"              
     def Write_To_File(self, file_name, write_text):

@@ -1,5 +1,4 @@
-import time   
-
+ 
 FCP_List = ["NEDAGOSTAR", "RIGHTEL", "ARYARESANE", "ARIARESANE", "ARYARESANEH",
             "SHATEL", "FARMANDARI", "ASIYATEC", "ASIATEC", "ASIATEK", "ASIATECH", "ASYIATEK", "HELMA", "PISHGAMAN",
             "DADEGOSTAR", "DADEHGOSTAR", "FARAGOSTAR", "FANAVA", "ERTEBATAT SABET PARSIAN", "QOS"]
@@ -197,10 +196,7 @@ class Interface():
             Port_qos = self.config[Por_location + len("service-policy input") +1: ening ]
     
         self.Profile = Port_qos
-    #++++++++++++++++++++++++++++++++++++
-    def Find_CSW_profile(self):
-        Port_qos = "" 
-        #srr-queue bandwidth shape 250 250 250 250
+
     #++++++++++++++++++++++++++++++++++++
     def FCP_exception(self):
         each_names = self.Description.split(" ")
@@ -289,7 +285,7 @@ class Interface():
     #++++++++++++++++++++++++++++++++++++
     def CSW_Valid_interface(self):
 
-        if ((self.Description == "no-des") or (self.ID == "0") or (self.config.find("shutdown") != -1)):
+        if ((self.Description == "") or (self.ID == "0") or (self.config.find("shutdown") != -1)):
             self.Problem = True
         if ((self.FCP == False) and (self.Profile == "")) :
             self.Problem = True
