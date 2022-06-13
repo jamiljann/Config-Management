@@ -25,7 +25,6 @@ class Network():
             if config_file.endswith(".cfg"):
                 self.file_list.append(config_file)     
                 self.all_routers.append(Router(config_file))
-                #print(config_file)
                 self.NO_Routers +=1            
         self._calculate_counters ()
  
@@ -62,61 +61,67 @@ class Network():
     
     #++++++++++++++++++++++++++++++++++++
     def Show_router_interfaces (self, router_name, int_name = None):
+        ''' Return all interfaces of a certain Router or a specific interface of certain Router which is given as an input parameter'''
         result = []
         for router in self.all_routers:
             if router.Name == router_name :
-                #print(router.Name, router_name)
                 router_interfaces = router.Show_Interfaces()
-                #print(router_interfaces)
-                if router_interfaces:
-                    for each_interface in router_interfaces:
-                        if int_name is not None:
+                if int_name is not None:
+                    if router_interfaces:
+                        for each_interface in router_interfaces:
                             if int_name != each_interface[1]:
                                 continue
-                        result.append (each_interface)
+                            result.append (each_interface)
+                else:
+                    result.append (router_interfaces)
         if len(result) != 0 :
             return result
         else:
             return False
     #++++++++++++++++++++++++++++++++++++
     def Find_ID (self, my_id):
+        ''' Return a Port of a Router which has the same Customer ID which is given as input parameter'''
         result = []
         for router in self.all_routers:
             router_interfaces = router.Find_ID(my_id)
             if router_interfaces:
                 for each_interface in router_interfaces:
                     result.append (each_interface)
-        if len(result) != 0 :
-            return result
-        else:
+        if result == [] :         
             return False
+        else:
+            return result 
     #++++++++++++++++++++++++++++++++++++
     def Find_Description (self, my_Desc):
+        ''' Return a Port of a Router which has the same Description as input parameter'''
         result = []
         for router in self.all_routers:
             router_interfaces = router.Find_Description(my_Desc)
             if router_interfaces:
                 for each_interface in router_interfaces:
                     result.append (each_interface)
-        if len(result) != 0 :
-            return result
-        else:
+        if result == [] :         
             return False
+        else:
+            return result 
+        
     #++++++++++++++++++++++++++++++++++++
     def Find_IP (self, my_IP):
+        ''' Return a Port of a specific Router which has the same IP as input parameter'''
         result = []
         for router in self.all_routers:
             router_interfaces = router.Find_IP(my_IP)
             if router_interfaces:
                 for each_interface in router_interfaces:
                     result.append (each_interface)
-        if len(result) != 0 :
-            return result
-        else:
+        if result == [] :         
             return False
+        else:
+            return result 
    
     #++++++++++++++++++++++++++++++++++++     
     def Find_Port (self, int_Name, router_name = None):
+        ''' Return a certain Port of a specific Router or of each Router'''
         result = []           
         for router in self.all_routers:
             if router_name is not None:
@@ -126,22 +131,26 @@ class Network():
             if router_interfaces:
                 for each_interface in router_interfaces:
                     result.append (each_interface)
-        if len(result) != 0 :
-            return result
-        else:
+        if result == [] :         
             return False
+        else:
+            return result 
+        
     #++++++++++++++++++++++++++++++++++++
     def Find_Router (self, router_name):
+        ''' Return a certain Router which has the specific Name'''
         for router in self.all_routers:
             if router.Name == router_name:
                 return (router)
     #++++++++++++++++++++++++++++++++++++
     def Router_Type (self, router_name):
+        ''' Return Type of a certain Router'''
         for router in self.all_routers:
             if router.Name == router_name:
                 return (router.Type)
     #++++++++++++++++++++++++++++++++++++
     def Find_Router_IP (self, router_name):
+        ''' Return IP Address of a certain Router'''
         for router in self.all_routers:
             if router.Name == router_name:
                 return (router._Router_IP())     
@@ -154,21 +163,24 @@ class Network():
         return (routers_name)
     #++++++++++++++++++++++++++++++++++++
     def NO_Router (self):
+        ''' Return Number of Routers in the Network'''
         return (self.NO_Routers)
     #++++++++++++++++++++++++++++++++++++
     def NO_ID (self):
+        ''' Return Number of Cusromer IDs in the Network'''
         return (self.NO_IDs)
     #++++++++++++++++++++++++++++++++++++
     def NO_inerface (self):
+    ''' Return Number of Intetrfaces in the Network'''
         return (self.NO_Interfaces)
     #++++++++++++++++++++++++++++++++++++
     def NO_FCP (self):
+        ''' Return Number of FCP Cusromers in the Network'''
         return (self.NO_FCPs)
     #+++++++++++++++++++++++++++++++++++
     def Write_To_File(self, file_name, write_text):
         try:
-           f = open(file_name, "a", encoding='utf-8')
-           #f.mode 
+           f = open(file_name, "a", encoding='utf-8') 
            f.write(write_text)
         finally:
            f.close()
@@ -184,7 +196,7 @@ class Network():
 
         file_name = "Reports/Free_Ports" + ".xls"
         self.Export_to_excel(result, file_name)
-        print(i)
+        print('Number of free ports is:',i)
     #++++++++++++++++++++++++++++++++++++   
     def Find_IP_INET(self):
         result = []
@@ -307,6 +319,7 @@ class Network():
         
     #++++++++++++++++++++++++++++++++++++
     def Read_DCRM(self, router_name ) :
+        '''Read an Excel file as Output of CRM System contains all SLA of Customers to compair with SLA is configured on customer's interface' '''
         filename = "Data-Customers14001224.xls"  
         col_name =""
         my_cel = "Not_Found"
@@ -320,7 +333,6 @@ class Network():
         
         for router in self.all_routers:
             if router.Name == router_name:
-                #print("Reading DCRM for: ", router.Name)
                 for ints in router.all_interfaces:
                     my_cel = "Not_Found"
                     my_find = False
@@ -340,10 +352,10 @@ class Network():
                                     my_cel = sheet1.cell_value(i, j)
                                     ints.DCRM_Profile = my_cel
                                     my_find = False                   
-                    #my_list= (router.Name, ints.Name, ints.Description, ints.Encap, ints.ID, ints.IP, ints.VPN, ints.Profile, ints.DCRM_Profile )
                     result.append(ints.Show_Interface(router.Name))
-            if len(result) != 0 :
-                return (result)
-            else:
-                return False
+
+            if result == [] :         
+            return False
+        else:
+            return result
             
