@@ -88,9 +88,8 @@ class my_menus():
     def show_about(self):
         about_message = "Network Automation, Version 4.3"
         about_detail = (
-            'by Seyedjamil Sabbaghifaragard \n'
-            'For assistance please contact the author: \n' 
-            'jsabaghi@gmail.com, https://www.linkedin.com/in/seyed-jamil-sabbaghi-faragard/')
+            'by Seyed jamil Sabbaghifaragard \n'
+            'For assistance please contact the author: \n' )
         messagebox.showinfo(title='About', message= about_message, detail= about_detail)
         
     def ReadConfigsMenu(self):
